@@ -1,16 +1,16 @@
-import './css/App.css';
-import Lib from './../lib';
+import 'demo/css/App.css';
+import Lib from 'lib';
 
 class App {
-  constructor(){
+  constructor() {
     let libInstance = new Lib();
-    console.log("Demo loaded!", libInstance);
+    console.log('Demo loaded!', libInstance);
     this.demoArrowMethod();
   }
 
   demoArrowMethod = () => {
-    console.log("Arrow methods will work");
-  }
+    console.log('Arrow methods will work');
+  };
 }
 
 export default App;

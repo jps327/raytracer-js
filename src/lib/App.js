@@ -1,7 +1,8 @@
-import './css/App.css';
+// @flow
+import 'lib/css/App.css';
 
 class App {
-  myVar = true;
+  myVar: boolean = true;
 
   constructor() {
     const { myArrowMethod, myVar } = this;

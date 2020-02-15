@@ -1,0 +1,30 @@
+[ignore]
+
+[include]
+<PROJECT_ROOT>/src
+
+[libs]
+<PROJECT_ROOT>/flow-typed
+
+[lints]
+nonstrict-import=warn
+unclear-type=warn
+unsafe-getters-setters=warn
+untyped-import=warn
+untyped-type-import=warn
+sketchy-null=warn
+
+[options]
+emoji=true
+exact_by_default=true
+module.system.node.resolve_dirname=<PROJECT_ROOT>/node_modules
+module.system.node.resolve_dirname=<PROJECT_ROOT>/src
+module.file_ext=.js
+module.file_ext=.jsx
+module.file_ext=.json
+module.file_ext=.scss
+module.name_mapper='^lib\(.*\)$' -> '<PROJECT_ROOT>/src/lib/\1'
+module.name_mapper='^demo\(.*\)$' -> '<PROJECT_ROOT>/src/demo/\1'
+
+[declarations]
+<PROJECT_ROOT>/node_modules

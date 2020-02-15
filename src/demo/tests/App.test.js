@@ -1,4 +1,4 @@
-import App from './../App';
+import App from 'demo/App';
 
 it('renders without crashing', () => {
   new App();

@@ -1,6 +1,6 @@
 {
   "name": "raytracer-js",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "JavaScript Ray Tracer library",
   "main": "build/index.js",
   "scripts": {
@@ -30,6 +30,7 @@
     "@babel/core": "7.6.4",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
+    "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@svgr/webpack": "4.3.3",
     "@typescript-eslint/eslint-plugin": "1.13.0",
@@ -53,6 +54,8 @@
     "eslint-plugin-react": "7.16.0",
     "eslint-plugin-react-hooks": "^2.2.0",
     "file-loader": "4.2.0",
+    "flow-bin": "^0.111.1",
+    "flow-typed": "^2.5.1",
     "fs-extra": "8.1.0",
     "html-webpack-plugin": "4.0.0-beta.8",
     "identity-obj-proxy": "3.0.0",
@@ -157,12 +160,16 @@
   "babel": {
     "presets": [
       "@babel/preset-env",
-      "@babel/preset-react"
+      "@babel/preset-react",
+      "@babel/preset-flow"
     ],
     "plugins": [
       [
         "@babel/plugin-proposal-class-properties"
       ]
     ]
+  },
+  "dependencies": {
+    "invariant": "^2.2.4"
   }
 }
