@@ -1,5 +1,11 @@
 // @flow
 
+/**
+ * This class represents a vector with 3 values.
+ * All vector operations are immutable by default (i.e. they return a new Vec3
+ * instance without mutating the original vector). You can pass a 'm' flag to
+ * any operation to mutate the original vector.
+ */
 export default class Vec3 {
   _a: number;
   _b: number;
@@ -27,6 +33,14 @@ export default class Vec3 {
     return new Vec3(this._a, this._b, this._c);
   }
 
+  set(x: number, y: number, z: number, mutabilityType?: 'm' | 'i' = 'i'): Vec3 {
+    const vec = mutabilityType === 'm' ? this : this.clone();
+    vec._a = x;
+    vec._b = y;
+    vec._c = z;
+    return vec;
+  }
+
   makeUnitVector(mutabilityType?: 'm' | 'i' = 'i'): Vec3 {
     const vec = mutabilityType === 'm' ? this : this.clone();
     const len = Math.sqrt(vec._a * vec._a + vec._b * vec._b + vec._c * vec._c);
@@ -34,6 +48,13 @@ export default class Vec3 {
     vec._b /= len;
     vec._c /= len;
     return vec;
+  }
+
+  /**
+   * An alias for makeUnitVector
+   */
+  normalize(mutabilityType?: 'm' | 'i'): Vec3 {
+    return this.makeUnitVector(mutabilityType);
   }
 
   /**

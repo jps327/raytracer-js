@@ -1,5 +1,29 @@
 // @flow
+
+function _clamp(low: number, high: number, val: number): number {
+  if (val > high) {
+    return high;
+  } else if (val < low) {
+    return low;
+  } else {
+    return val;
+  }
+}
+
+/**
+ * This class represents a Color with r, g, b values.
+ * All operations are immutable by default. You can pass a 'm' flag to any
+ * operation to mutate the original color.
+ */
 export default class Color {
+  static RED = () => new Color(1, 0, 0);
+  static GREEN = () => new Color(0, 1, 0);
+  static WHITE = () => new Color(1, 1, 1);
+  static BLACK = () => new Color(0, 0, 0);
+  static BLUE = () => new Color(0, 0, 1);
+  static GRAY = () => new Color(0.5, 0.5, 0.5);
+  static YELLOW = () => new Color(1, 1, 0);
+
   _r: number;
   _g: number;
   _b: number;
@@ -81,13 +105,14 @@ export default class Color {
   }
 
   /**
-   * Apply a gamma 2 correction on the color
+   * Apply a gamma correction on the color
    */
-  gamma2(mutabilityType?: 'm' | 'i' = 'i'): Color {
+  gammaCorrect(gamma: number, mutabilityType?: 'm' | 'i' = 'i') {
     const col = mutabilityType === 'm' ? this : this.clone();
-    col._r = Math.sqrt(col._r);
-    col._g = Math.sqrt(col._g);
-    col._b = Math.sqrt(col._b);
+    const inverseGamma = 1 / gamma;
+    col._r = Math.pow(col._r, inverseGamma);
+    col._g = Math.pow(col._g, inverseGamma);
+    col._b = Math.pow(col._b, inverseGamma);
     return col;
   }
 
@@ -96,6 +121,14 @@ export default class Color {
     col._r *= c._r;
     col._g *= c._g;
     col._b *= c._b;
+    return col;
+  }
+
+  clampColor(mutabilityType?: 'm' | 'i'): Color {
+    const col = mutabilityType === 'm' ? this : this.clone();
+    col._r = _clamp(0, 1, col._r);
+    col._g = _clamp(0, 1, col._g);
+    col._b = _clamp(0, 1, col._b);
     return col;
   }
 }

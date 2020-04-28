@@ -6,6 +6,7 @@ import Vec3 from 'lib/Vec3';
  * a point until we get one that lies in the unit sphere. The test for this is
  * simple: check if the squared length is less than 1.
  */
+// TODO: safe to remove?
 export function randomPointInUnitSphere(): Vec3 {
   let p: Vec3;
   do {
@@ -21,6 +22,7 @@ export function randomPointInUnitSphere(): Vec3 {
 /**
  * Create a random point in a unit disk.
  */
+// TODO: safe to remove?
 export function randomPointInUnitDisk(): Vec3 {
   let p: Vec3;
   do {

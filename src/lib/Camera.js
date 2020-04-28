@@ -1,74 +1,96 @@
 // @flow
 import Ray from 'lib/Ray';
 import Vec3 from 'lib/Vec3';
-import { randomPointInUnitDisk } from 'lib/util';
+
+type CameraConfig = {
+  +eye?: Vec3,
+  +viewDirection?: Vec3,
+  +up?: Vec3,
+  +projectionDistance?: number,
+  +viewWidth?: number,
+  +viewHeight?: number,
+};
 
 export default class Camera {
-  _lensRadius: number;
-  _lowerLeftCorner: Vec3;
-  _horizontal: Vec3;
-  _vertical: Vec3;
-  _origin: Vec3;
-  _u: Vec3; // unit vector in X axis on camera's plane
-  _v: Vec3; // unit vector in Y axis on camera's plane
+  _eye: Vec3;
+  _projectionDistance: number;
+  _basisU: Vec3;
+  _basisV: Vec3;
+  _basisW: Vec3;
+  _viewWidth: number;
+  _viewHeight: number;
+  _bottom: number;
+  _top: number;
+  _left: number;
+  _right: number;
 
-  /**
-   * @param {Vec3} lookFrom The point from which the camera looks
-   * @param {Vec3} lookAt The to which the camera looks
-   * @param {Vec3} vup The "view up" vector for this camera
-   * @param {number} vfov Vertical field of view (top to bottom in degrees)
-   * @param {number} aspect The aspect ratio
-   * @param {number} aperture The diameter of the camera aperture
-   * @param {number} focusDistance The distance from the camera lens to the
-   * focus plane
-   */
-  constructor(cameraConfig: {
-    lookFrom: Vec3,
-    lookAt: Vec3,
-    vup: Vec3,
-    vfov: number,
-    aspect: number,
-    aperture: number,
-    focusDistance: number,
-  }) {
-    const {
-      lookFrom,
-      lookAt,
-      vup,
-      vfov,
-      aspect,
-      aperture,
-      focusDistance,
-    } = cameraConfig;
+  static DEFAULT = new Camera({
+    eye: new Vec3(0, 0, 1),
+    viewDirection: new Vec3(0, 0, -1),
+    up: new Vec3(0, 1, 0),
+    projectionDistance: 1,
+    viewWidth: 1,
+    viewHeight: 1,
+  });
 
-    const theta = (vfov * Math.PI) / 180;
-    const halfHeight = Math.tan(theta / 2);
-    const halfWidth = aspect * halfHeight;
-    const w = lookFrom.subtract(lookAt).makeUnitVector('m');
-    const u = vup.cross(w).makeUnitVector('m');
-    const v = w.cross(u);
-
-    this._u = u;
-    this._v = v;
-    this._origin = lookFrom;
-    this._lowerLeftCorner = this._origin
-      .subtractScaled(halfWidth * focusDistance, u)
-      .subtractScaled(halfHeight * focusDistance, v, 'm')
-      .subtractScaled(focusDistance, w, 'm');
-    this._horizontal = u.scale(2 * halfWidth * focusDistance);
-    this._vertical = v.scale(2 * halfHeight * focusDistance);
-    this._lensRadius = aperture / 2;
+  constructor({
+    eye = new Vec3(0, 0, 1),
+    viewDirection = new Vec3(0, 0, -1),
+    up = new Vec3(0, 1, 0),
+    projectionDistance = 1,
+    viewWidth = 1,
+    viewHeight = 1,
+  }: CameraConfig) {
+    this._eye = eye;
+    this._projectionDistance = projectionDistance;
+    this._basisW = viewDirection.scale(-1).normalize('m');
+    this._basisU = up.cross(this._basisW).normalize('m');
+    this._basisV = this._basisW.cross(this._basisU).normalize('m');
+    this.setViewHeight(viewHeight);
+    this.setViewWidth(viewWidth);
   }
 
-  getRay(s: number, t: number): Ray {
-    // const rd = randomPointInUnitDisk().scale(this._lensRadius);
-    // const offset = this._u.scale(rd.x()).addScaled(rd.y(), this._v, 'm');
-    const offset = new Vec3(0, 0, 0);
-    const direction = this._lowerLeftCorner
-      .addScaled(s, this._horizontal)
-      .addScaled(t, this._vertical, 'm')
-      .subtract(this._origin, 'm')
-      .subtract(offset, 'm');
-    return new Ray(this._origin.add(offset), direction);
+  left(): number {
+    return this._left;
+  }
+
+  right(): number {
+    return this._right;
+  }
+
+  top(): number {
+    return this._top;
+  }
+
+  bottom(): number {
+    return this._bottom;
+  }
+
+  setViewHeight(height: number): void {
+    this._viewHeight = height;
+    this._bottom = -this._viewHeight / 2;
+    this._top = this._viewHeight / 2;
+  }
+
+  setViewWidth(width: number): void {
+    this._viewWidth = width;
+    this._left = -this._viewWidth / 2;
+    this._right = this._viewWidth / 2;
+  }
+
+  /**
+   * Generate a ray going from the camera through a point in the image.
+   * @param {number} u X coordinate of image in range [0, 1]
+   * @param {number} v Y coordinate of image in range [0, 1]
+   */
+  getRay(u: number, v: number): Ray {
+    // s is the point on the image which our ray intersects
+    const s = this._eye
+      .addScaled(u, this._basisU)
+      .addScaled(v, this._basisV, 'm')
+      .subtractScaled(this._projectionDistance, this._basisW, 'm');
+
+    const direction = s.subtract(this._eye, 'm').normalize('m');
+    return new Ray(this._eye, direction);
   }
 }
