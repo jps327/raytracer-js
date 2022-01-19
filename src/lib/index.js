@@ -116,12 +116,6 @@ const MULTI_SPHERE_SCENE = new Scene({
         specularColor: new Color(0, 1, 1),
         exponent: 100,
       }),
-      /*
-      shader: new Metal({
-        albedo: Color.BLUE(),
-        fuzziness: 0.5,
-      }),
-      */
     }),
   )
   .finalizeSetup();
