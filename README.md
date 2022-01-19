@@ -1,4 +1,4 @@
 # raytracer-js
-**Work in progress**
+**WORK IN PROGRESS**
 
 JavaScript Ray Tracer library
